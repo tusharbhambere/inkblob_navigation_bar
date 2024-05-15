@@ -79,22 +79,27 @@ class InkblobNavigationBar extends StatelessWidget {
 
   /// Calculates the (left) offset of an icon based on its index
   double _iconOffset(double maxWidth, double index) {
-    return ((maxWidth - items.length * itemWidth) / (items.length + 1)) * (index + 1) + (index * itemWidth);
+    return ((maxWidth - items.length * itemWidth) / (items.length + 1)) *
+            (index + 1) +
+        (index * itemWidth);
   }
 
   /// Calculates the (left) offset of the inkblob based on the animation value
-  double _blobOffset(double maxWidth, double value) => _iconOffset(maxWidth, value) + ((itemWidth - iconSize) / 2);
+  double _blobOffset(double maxWidth, double value) =>
+      _iconOffset(maxWidth, value) + ((itemWidth - iconSize) / 2);
 
   /// Calculates the proportion of the inkblob animation distance it is covered by an icon
   double _percentageDist(double maxWidth) {
     return iconSize /
-        (((maxWidth - items.length * itemWidth) / (items.length + 1) + (itemWidth - iconSize)) *
+        (((maxWidth - items.length * itemWidth) / (items.length + 1) +
+                (itemWidth - iconSize)) *
             (selectedIndex - previousIndex).abs());
   }
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = backgroundColor ?? Theme.of(context).bottomAppBarColor;
+    final bgColor =
+        backgroundColor ?? Theme.of(context).bottomAppBarTheme.color;
 
     return Container(
       decoration: BoxDecoration(
@@ -127,7 +132,8 @@ class InkblobNavigationBar extends StatelessWidget {
                     ),
                     builder: (context, double value, child) {
                       double anim =
-                          (value - min(previousIndex, selectedIndex)) / max(1, (previousIndex - selectedIndex).abs());
+                          (value - min(previousIndex, selectedIndex)) /
+                              max(1, (previousIndex - selectedIndex).abs());
                       anim = previousIndex > selectedIndex ? 1 - anim : anim;
                       Color color = Color.lerp(
                             items[previousIndex].color,
@@ -139,7 +145,9 @@ class InkblobNavigationBar extends StatelessWidget {
                       return Positioned(
                         left: _blobOffset(constraints.maxWidth, value),
                         child: Transform.scale(
-                          scaleX: 0.9 + (anim > 0.5 ? 1 - anim : anim) * (selectedIndex - previousIndex).abs(),
+                          scaleX: 0.9 +
+                              (anim > 0.5 ? 1 - anim : anim) *
+                                  (selectedIndex - previousIndex).abs(),
                           child: Opacity(
                             opacity: _opacity(anim, percentageDist),
                             child: Container(
@@ -170,25 +178,32 @@ class InkblobNavigationBar extends StatelessWidget {
                       bool isSelected = index == selectedIndex;
 
                       return Positioned(
-                        left: _iconOffset(constraints.maxWidth, index.toDouble()),
+                        left:
+                            _iconOffset(constraints.maxWidth, index.toDouble()),
                         child: GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () => onItemSelected(index),
                           child: (isSelected) ^ (index == previousIndex)
                               ? TweenAnimationBuilder<double>(
-                                  tween: isSelected ? Tween<double>(begin: 0, end: 1) : Tween<double>(begin: 1, end: 0),
+                                  tween: isSelected
+                                      ? Tween<double>(begin: 0, end: 1)
+                                      : Tween<double>(begin: 1, end: 0),
                                   duration: animationDuration,
                                   curve: curve,
-                                  builder: (context, value, child) => _ItemWidget(
+                                  builder: (context, value, child) =>
+                                      _ItemWidget(
                                     item: item,
                                     fillValue: max(
                                       1 - (1 - value) * (1 / percentageDist),
                                       0,
                                     ),
                                     iconSize: iconSize,
-                                    selectionDirection: (index > selectedIndex) || (isSelected && index > previousIndex)
-                                        ? TextDirection.ltr
-                                        : TextDirection.rtl,
+                                    selectionDirection:
+                                        (index > selectedIndex) ||
+                                                (isSelected &&
+                                                    index > previousIndex)
+                                            ? TextDirection.ltr
+                                            : TextDirection.rtl,
                                     itemWidth: itemWidth,
                                     itemHeight: containerHeight,
                                   ),
@@ -260,12 +275,14 @@ class _ItemWidget extends StatelessWidget {
                       )
                     : Transform(
                         alignment: Alignment.topCenter,
-                        transform: Matrix4.translationValues(fillValue, fillValue, 1)..scale(fillValue, fillValue, 1),
+                        transform:
+                            Matrix4.translationValues(fillValue, fillValue, 1)
+                              ..scale(fillValue, fillValue, 1),
                         child: item.title,
                       ),
               )
             else
-              const Spacer()
+              const Spacer(),
           ],
         ),
       ),
